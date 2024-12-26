@@ -76,12 +76,13 @@ export default function Home() {
     <div className="px-4 h-full flex flex-col">
       <header className="py-4">
         <Image
+          onClick={() => location.reload()}
           src="/luck-logo.png"
           alt="luck-logo"
           title="럭키비키 - Lucky bicky"
           width={200}
           height={50}
-          className="w-[200px] h-auto"
+          className="w-[200px] h-auto cursor-pointer"
         />
       </header>
       <main className="flex flex-1 flex-col items-center py-10 text-center">
