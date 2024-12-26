@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import { CLIENT_ORIGIN } from "./constant";
+import Script from "next/dist/client/script";
 
 const pretendard = localFont({
   src: "./fonts/PretendardVariable.woff2",
@@ -11,6 +12,7 @@ const pretendard = localFont({
 
 const title = "럭키비키 - 내 운 시험하기";
 const description = "나의 운은 상위 몇퍼센트일까요? 지금 확인해보세요!";
+const GA_TRACKING_ID = "G-01FMX7HFBS";
 
 export const metadata: Metadata = {
   metadataBase: new URL(CLIENT_ORIGIN),
@@ -53,6 +55,19 @@ export default function RootLayout({
         <meta httpEquiv="Content-Language" content="ko" />
         <meta name="apple-mobile-web-app-title" content="럭키비키" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
+        {/* Google Analytics */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_TRACKING_ID}');
+          `}
+        </Script>
       </head>
       <body className={`${pretendard.className} bg-[#f1f1f1]`}>
         <div className="flex justify-center">
