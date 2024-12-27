@@ -158,6 +158,10 @@ export default function Home() {
                 <div className="text-blue-500">
                   <p>박제 완료!</p>
                 </div>
+              ) : recordStatus === "ONGOING" ? (
+                <div className="text-green-600">
+                  <p>행운 박제중...</p>
+                </div>
               ) : (
                 <div className="flex gap-2">
                   <input

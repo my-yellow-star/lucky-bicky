@@ -31,7 +31,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ success: true });
     }
     const parsed = await res.json();
-    console.log(parsed);
+
     return NextResponse.json(
       {
         success: false,
