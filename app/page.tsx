@@ -83,7 +83,7 @@ export default function Home() {
         url: CLIENT_ORIGIN,
       });
     } catch (error) {
-      alert(error);
+      console.error(error);
     }
   }
 
