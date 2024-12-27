@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-import { CLIENT_ORIGIN } from "./constant";
+import { API_ORIGIN, CLIENT_ORIGIN } from "./constant";
 import {
   formatProbability,
+  generateSignedFingerprint,
   getLevelProbability,
   getLevelTextColor,
   getPercentage,
@@ -50,12 +51,29 @@ export default function Home() {
   async function record() {
     setRecordStatus("ONGOING");
     try {
-      const res = await fetch("/api/record", {
+      const timestamp = Date.now();
+      const prepare = await fetch("/api/record", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Fingerprint": generateSignedFingerprint(),
+        },
+        body: JSON.stringify({ level, nickname, timestamp }),
+      });
+
+      const { secret } = await prepare.json();
+
+      const res = await fetch(`${API_ORIGIN}/api/v1/luck`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ level, nickname }),
+        body: JSON.stringify({
+          level,
+          nickname,
+          timestamp,
+          secret,
+        }),
       });
       if (res.ok) {
         alert("행운 박제에 성공했어요");

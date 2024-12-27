@@ -1,44 +1,45 @@
-import { API_ORIGIN } from "@/app/constant";
-import { encrypt } from "@/app/function";
+import { encrypt, generateHmac } from "@/app/function";
 import { NextResponse } from "next/server";
+
+const SIGN_KEY = process.env.SIGN || "";
+
+// HMAC 서명 검증
+function verifyHmac(data: string, signature: string, secret: string): boolean {
+  const expectedSignature = generateHmac(data, secret);
+  return expectedSignature === signature;
+}
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
-    const body: { level: number; nickname: string } = await request.json();
+    const body: { level: number; nickname: string; timestamp: number } =
+      await request.json();
 
-    const timestamp = Date.now();
-    const payload = JSON.stringify({
-      level: body.level,
-      nickname: body.nickname,
-      timestamp,
-    });
-    const secret = encrypt(payload);
-
-    const res = await fetch(`${API_ORIGIN}/api/v1/luck`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        level: body.level,
-        nickname: body.nickname,
-        timestamp,
-        secret,
-      }),
-    });
-
-    if (res.ok) {
-      return NextResponse.json({ success: true });
+    const fingerprintHeader = request.headers.get("x-fingerprint");
+    if (!fingerprintHeader) {
+      return NextResponse.json(
+        { success: false, error: "Missing fingerprint" },
+        { status: 403 }
+      );
     }
-    const parsed = await res.json();
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: parsed.error ?? parsed.message ?? res.statusText,
-      },
-      { status: 500 }
-    );
+    const [fingerprint, signature] = fingerprintHeader.split(".");
+    if (!fingerprint || !signature) {
+      return NextResponse.json(
+        { success: false, error: "Invalid fingerprint format" },
+        { status: 403 }
+      );
+    }
+
+    // 핑거프린트 검증
+    if (!verifyHmac(fingerprint, signature, SIGN_KEY)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid fingerprint signature" },
+        { status: 403 }
+      );
+    }
+
+    const secret = encrypt(JSON.stringify(body));
+    return NextResponse.json({ secret });
   } catch (error) {
     console.error("Error in API:", error);
     return NextResponse.json({ success: false, error }, { status: 500 });

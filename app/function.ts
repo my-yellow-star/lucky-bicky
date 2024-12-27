@@ -85,7 +85,27 @@ export function getLevelTextColor(level: number, maxLevel: number = 15) {
   return interpolateColor(colors[index], colors[index + 1], ratio);
 }
 
+export function generateFingerprint() {
+  const userAgent = navigator.userAgent;
+  const screenSize = `${window.screen.width}x${window.screen.height}`;
+  const language = navigator.language;
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return btoa(`${userAgent}|${screenSize}|${language}|${timeZone}`);
+}
+
 import crypto from "crypto";
+
+export function generateHmac(data: string, secret: string) {
+  return crypto.createHmac("sha256", secret).update(data).digest("hex");
+}
+
+export function generateSignedFingerprint() {
+  const fingerprint = generateFingerprint();
+  const secret = "ENviwh#OD304Ne8cld";
+  const signature = generateHmac(fingerprint, secret);
+  return `${fingerprint}.${signature}`;
+}
 
 const SECRET_KEY = process.env.SECRET_KEY;
 const IV = process.env.IV;
