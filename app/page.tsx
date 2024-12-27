@@ -25,6 +25,7 @@ export default function Home() {
   >("PENDING");
   const captureRef = useRef(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout>(null);
 
   function reset() {
     inputRef.current?.blur();
@@ -43,8 +44,11 @@ export default function Home() {
   }
 
   function handleLevelUp() {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
     setShowAnimation(true);
-    setTimeout(() => setShowAnimation(false), 1500);
+    timeoutRef.current = setTimeout(() => setShowAnimation(false), 1500);
     setLevel((prev) => prev + 1);
   }
 
@@ -140,7 +144,10 @@ export default function Home() {
                 {level}
               </p>
               {showAnimation && (
-                <LevelUpAnimation className="top-1/2 pointer-events-none left-1/2 transform -translate-x-1/2 -translate-y-1/2 absolute z-50" />
+                <LevelUpAnimation
+                  key={level}
+                  className="top-1/2 pointer-events-none left-1/2 transform -translate-x-1/2 -translate-y-1/2 absolute z-50"
+                />
               )}
             </div>
             <button

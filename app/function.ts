@@ -11,15 +11,17 @@ export function getLevelProbability(lv: number) {
 }
 
 export function formatProbability(value: number) {
+  const percentage = value * 100;
+
   if (value <= 0 || value >= 1) {
-    return value * 100;
+    return percentage;
   }
 
   if (value >= 0.001) {
-    return (value * 100).toFixed(2);
+    return percentage.toFixed(2);
   }
 
-  const strValue = value.toString(); // 문자열로 변환
+  const strValue = percentage.toString(); // 문자열로 변환
   const digits = strValue.split(""); // 각 자리 숫자로 분리
   let significantDigits = 0; // 의미 있는 숫자 위치 추적
 
@@ -32,7 +34,7 @@ export function formatProbability(value: number) {
   }
 
   // 의미 있는 숫자 이후 한 자리에서 반올림
-  const roundedValue = parseFloat(value.toFixed(significantDigits)) * 100;
+  const roundedValue = percentage.toFixed(significantDigits);
   return roundedValue.toString();
 }
 
