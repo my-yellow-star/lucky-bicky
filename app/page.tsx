@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   getPercentage,
   formatProbability,
@@ -10,6 +10,7 @@ import {
 } from "./function";
 import LevelUpAnimation from "./level-up-animation";
 import { API_ORIGIN, CLIENT_ORIGIN } from "./constant";
+import html2canvas from "html2canvas";
 
 export default function Home() {
   const [level, setLevel] = useState(0);
@@ -19,6 +20,7 @@ export default function Home() {
   const [recordStatus, setRecordStatus] = useState<
     "PENDING" | "ONGOING" | "COMPLETE"
   >("PENDING");
+  const captureRef = useRef(null);
 
   function levelUp() {
     if (seededRandom(Date.now()) < getPercentage(level)) {
@@ -62,14 +64,34 @@ export default function Home() {
     }
   }
 
+  async function capture() {
+    if (!captureRef.current) return;
+
+    try {
+      const canvas = await html2canvas(captureRef.current);
+      const dataUrl = canvas.toDataURL("image/png");
+
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+
+      return new File([blob], "screenshot.png", { type: "image/png" });
+    } catch (error) {
+      console.error("Error capturing screenshot:", error);
+    }
+  }
+
   async function share() {
+    const screenshot = await capture();
     try {
       await navigator.share({
         title: "나의 운은 몇레벨일까요?",
         text: "오로지 클릭만으로 나의 운을 테스트해보세요!",
         url: CLIENT_ORIGIN,
+        files: screenshot ? [screenshot] : undefined,
       });
-    } catch {}
+    } catch (error) {
+      alert(error);
+    }
   }
 
   return (
@@ -106,7 +128,7 @@ export default function Home() {
             <div className="relative">
               <p className="text-[120px]">{level}</p>
               {showAnimation && (
-                <LevelUpAnimation className="top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 absolute z-50" />
+                <LevelUpAnimation className="top-1/2 pointer-events-none left-1/2 transform -translate-x-1/2 -translate-y-1/2 absolute z-50" />
               )}
             </div>
             <button
@@ -117,21 +139,23 @@ export default function Home() {
             </button>
           </section>
         ) : (
-          <section className="mt-10 w-full flex flex-col items-center">
-            <h1 className="text-2xl font-bold">
-              {nickname.length > 0 ? `${nickname}님의` : "나의"} 행운 결과
-            </h1>
-            <p className="text-[120px]">
-              <span className="text-[48px] font-semibold">LV.</span>
-              {level}
-            </p>
-            <p className="text-lg">
-              나의 운은 상위{" "}
-              <span className="text-[#f00]">
-                {formatProbability(getLevelProbability(level - 1))}%
-              </span>
-              에요!
-            </p>
+          <div className="mt-10 w-full flex flex-col items-center">
+            <section ref={captureRef} className="px-8 py-4">
+              <h1 className="text-2xl font-bold">
+                {nickname.length > 0 ? `${nickname}님의` : "나의"} 행운 결과
+              </h1>
+              <p className="text-[120px]">
+                <span className="text-[48px] font-semibold">LV.</span>
+                {level}
+              </p>
+              <p className="text-lg">
+                나의 운은 상위{" "}
+                <span className="text-[#f00]">
+                  {formatProbability(getLevelProbability(level - 1))}%
+                </span>
+                에요!
+              </p>
+            </section>
             <div className="mt-8 w-full max-w-[480px]">
               {recordStatus === "COMPLETE" ? (
                 <div className="text-blue-500">
@@ -167,7 +191,7 @@ export default function Home() {
             >
               🍀 다시하기
             </button>
-          </section>
+          </div>
         )}
       </main>
       <footer className="py-4">
