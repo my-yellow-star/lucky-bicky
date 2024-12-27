@@ -88,14 +88,20 @@ export default function Home() {
       <main className="flex flex-1 flex-col items-center py-10 text-center">
         {!showResult ? (
           <section className="mt-6">
-            <h1 className="text-2xl font-bold">오늘의 운 시험하기</h1>
+            <h1 className="text-2xl font-bold">오늘의 행운 테스트</h1>
             <p className="mt-8">
-              레벨업 확률:{" "}
-              <span>{(getPercentage(level) * 100).toFixed(2)}%</span>
+              행운업 확률:{" "}
+              <span className="text-blue-500">
+                {(getPercentage(level) * 100).toFixed(2)}
+              </span>
+              %
             </p>
             <p>
               누적 확률:{" "}
-              <span>{formatProbability(getLevelProbability(level))}%</span>
+              <span className="font-semibold text-red-500">
+                {formatProbability(getLevelProbability(level))}
+              </span>
+              %
             </p>
             <div className="relative">
               <p className="text-[120px]">{level}</p>
@@ -107,13 +113,13 @@ export default function Home() {
               onClick={levelUp}
               className="bg-green-600 text-white px-6 py-4 rounded-lg mt-4 hover:bg-green-500"
             >
-              클릭으로 레벨업
+              클릭으로 행운업
             </button>
           </section>
         ) : (
           <section className="mt-10 w-full flex flex-col items-center">
             <h1 className="text-2xl font-bold">
-              {nickname.length > 0 ? `${nickname}님의` : "나의"} 운 결과
+              {nickname.length > 0 ? `${nickname}님의` : "나의"} 행운 결과
             </h1>
             <p className="text-[120px]">
               <span className="text-[48px] font-semibold">LV.</span>
@@ -142,7 +148,7 @@ export default function Home() {
                   <button
                     disabled={recordStatus !== "PENDING"}
                     onClick={record}
-                    className="rounded bg-black text-white px-4 shrink-0 disabled:bg-gray-400"
+                    className="rounded font-bold border-blue-500 border text-blue-500 px-4 shrink-0 disabled:bg-gray-400"
                   >
                     행운 박제
                   </button>
@@ -154,6 +160,12 @@ export default function Home() {
               className="w-full max-w-[480px] bg-blue-500 rounded py-2.5 mt-4 text-white hover:bg-blue-600"
             >
               친구에게 공유하기
+            </button>
+            <button
+              onClick={() => location.reload()}
+              className="mt-4 text-green-600 text-lg"
+            >
+              🍀 다시하기
             </button>
           </section>
         )}
