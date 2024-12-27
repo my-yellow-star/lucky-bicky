@@ -84,3 +84,22 @@ export function getLevelTextColor(level: number, maxLevel: number = 15) {
   if (index >= numColors - 1) return colors[numColors - 1]; // 최대 색상
   return interpolateColor(colors[index], colors[index + 1], ratio);
 }
+
+import crypto from "crypto";
+
+const SECRET_KEY = process.env.SECRET_KEY;
+const IV = process.env.IV;
+
+export function encrypt(data: string) {
+  if (!SECRET_KEY || !IV)
+    throw Error("secret key, iv 환경 변수가 존재하지 않습니다");
+
+  const cipher = crypto.createCipheriv(
+    "aes-256-cbc",
+    Buffer.from(SECRET_KEY),
+    Buffer.from(IV)
+  );
+  let encrypted = cipher.update(data, "utf-8", "hex");
+  encrypted += cipher.final("hex");
+  return encrypted;
+}

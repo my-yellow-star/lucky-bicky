@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-import { API_ORIGIN, CLIENT_ORIGIN } from "./constant";
+import { CLIENT_ORIGIN } from "./constant";
 import {
   formatProbability,
   getLevelProbability,
@@ -50,7 +50,7 @@ export default function Home() {
   async function record() {
     setRecordStatus("ONGOING");
     try {
-      const res = await fetch(`${API_ORIGIN}/api/v1/luck`, {
+      const res = await fetch("/api/record", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,11 +62,7 @@ export default function Home() {
         setRecordStatus("COMPLETE");
       } else {
         const parsed = await res.json();
-        alert(
-          `서버 오류가 발생했어요: ${
-            parsed.error ?? parsed.message ?? res.statusText
-          }`
-        );
+        alert(`서버 오류가 발생했어요: ${parsed.error}`);
         setRecordStatus("PENDING");
       }
     } catch (e) {
