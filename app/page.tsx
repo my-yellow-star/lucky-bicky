@@ -2,16 +2,16 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
+
+import { API_ORIGIN, CLIENT_ORIGIN } from "./constant";
 import {
-  getPercentage,
   formatProbability,
   getLevelProbability,
-  seededRandom,
   getLevelTextColor,
+  getPercentage,
+  seededRandom,
 } from "./function";
 import LevelUpAnimation from "./level-up-animation";
-import { API_ORIGIN, CLIENT_ORIGIN } from "./constant";
-import html2canvas from "html2canvas";
 import { RankerList } from "./ranker-list";
 
 export default function Home() {
@@ -75,30 +75,12 @@ export default function Home() {
     }
   }
 
-  async function capture() {
-    if (!captureRef.current) return;
-
-    try {
-      const canvas = await html2canvas(captureRef.current);
-      const dataUrl = canvas.toDataURL("image/png");
-
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-
-      return new File([blob], "screenshot.png", { type: "image/png" });
-    } catch (error) {
-      console.error("Error capturing screenshot:", error);
-    }
-  }
-
   async function share() {
-    const screenshot = await capture();
     try {
       await navigator.share({
         title: "나의 운은 몇레벨일까요?",
         text: "오로지 클릭만으로 나의 운을 테스트해보세요!",
         url: CLIENT_ORIGIN,
-        files: screenshot ? [screenshot] : undefined,
       });
     } catch (error) {
       alert(error);
