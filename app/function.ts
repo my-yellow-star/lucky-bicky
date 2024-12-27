@@ -44,3 +44,43 @@ export function seededRandom(seed: number) {
   seed = (a * seed + c) % m; // LCG 공식
   return seed / m; // 0과 1 사이의 값 반환
 }
+
+const colors = [
+  "#000000", // 검은색
+  "#000080", // 남색
+  "#0000FF", // 파란색
+  "#800080", // 보라색
+  "#FF3399", // 핑크색
+  "#FF0000", // 빨강색
+  "#FFA500", // 주황색
+];
+
+function interpolateColor(color1: string, color2: string, ratio: number) {
+  const hex = (color: string) => parseInt(color.substring(1), 16);
+  const r = (color: string) => (hex(color) >> 16) & 0xff;
+  const g = (color: string) => (hex(color) >> 8) & 0xff;
+  const b = (color: string) => hex(color) & 0xff;
+
+  const r1 = r(color1),
+    g1 = g(color1),
+    b1 = b(color1);
+  const r2 = r(color2),
+    g2 = g(color2),
+    b2 = b(color2);
+
+  const rNew = Math.round(r1 + (r2 - r1) * ratio);
+  const gNew = Math.round(g1 + (g2 - g1) * ratio);
+  const bNew = Math.round(b1 + (b2 - b1) * ratio);
+
+  return `rgb(${rNew}, ${gNew}, ${bNew})`;
+}
+
+export function getLevelTextColor(level: number, maxLevel: number = 15) {
+  const numColors = colors.length;
+  const segment = maxLevel / (numColors - 1); // 색상 간 레벨 범위
+  const index = Math.floor(level / segment); // 현재 색상 배열의 인덱스
+  const ratio = (level % segment) / segment; // 두 색상 사이의 비율
+
+  if (index >= numColors - 1) return colors[numColors - 1]; // 최대 색상
+  return interpolateColor(colors[index], colors[index + 1], ratio);
+}
