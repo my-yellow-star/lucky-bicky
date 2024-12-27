@@ -7,10 +7,12 @@ import {
   formatProbability,
   getLevelProbability,
   seededRandom,
+  getLevelTextColor,
 } from "./function";
 import LevelUpAnimation from "./level-up-animation";
 import { API_ORIGIN, CLIENT_ORIGIN } from "./constant";
 import html2canvas from "html2canvas";
+import { RankerList } from "./ranker-list";
 
 export default function Home() {
   const [level, setLevel] = useState(0);
@@ -21,6 +23,15 @@ export default function Home() {
     "PENDING" | "ONGOING" | "COMPLETE"
   >("PENDING");
   const captureRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function reset() {
+    inputRef.current?.blur();
+    setLevel(0);
+    setShowAnimation(false);
+    setShowResult(false);
+    setRecordStatus("PENDING");
+  }
 
   function levelUp() {
     if (seededRandom(Date.now()) < getPercentage(level)) {
@@ -104,16 +115,16 @@ export default function Home() {
           title="럭키비키 - Lucky bicky"
           width={200}
           height={50}
-          className="w-[200px] h-auto cursor-pointer"
+          className="w-[100px] md:w-[150px] h-auto cursor-pointer"
         />
       </header>
-      <main className="flex flex-1 flex-col items-center py-10 text-center">
+      <main className="flex w-full flex-1 flex-col items-center py-10 text-center">
         {!showResult ? (
           <section className="mt-6">
             <h1 className="text-2xl font-bold">오늘의 행운 테스트</h1>
             <p className="mt-8">
               행운업 확률:{" "}
-              <span className="text-blue-500">
+              <span style={{ color: getLevelTextColor(level) }}>
                 {(getPercentage(level) * 100).toFixed(2)}
               </span>
               %
@@ -126,7 +137,12 @@ export default function Home() {
               %
             </p>
             <div className="relative">
-              <p className="text-[120px]">{level}</p>
+              <p
+                style={{ color: getLevelTextColor(level) }}
+                className="text-[120px]"
+              >
+                {level}
+              </p>
               {showAnimation && (
                 <LevelUpAnimation className="top-1/2 pointer-events-none left-1/2 transform -translate-x-1/2 -translate-y-1/2 absolute z-50" />
               )}
@@ -142,9 +158,12 @@ export default function Home() {
           <div className="mt-10 w-full flex flex-col items-center">
             <section ref={captureRef} className="px-8 py-4">
               <h1 className="text-2xl font-bold">
-                {nickname.length > 0 ? `${nickname}님의` : "나의"} 행운 결과
+                {nickname.length > 0 ? `${nickname}님의` : "나의"} 행운력
               </h1>
-              <p className="text-[120px]">
+              <p
+                className="text-[120px]"
+                style={{ color: getLevelTextColor(level) }}
+              >
                 <span className="text-[48px] font-semibold">LV.</span>
                 {level}
               </p>
@@ -165,6 +184,8 @@ export default function Home() {
                 <div className="flex gap-2">
                   <input
                     type="text"
+                    ref={inputRef}
+                    value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                     className="bg-gray-200 w-full px-4 py-2 rounded focus:outline-none"
                     placeholder="닉네임 입력하고 기록하기"
@@ -185,15 +206,16 @@ export default function Home() {
             >
               친구에게 공유하기
             </button>
-            <button
-              onClick={() => location.reload()}
-              className="mt-4 text-green-600 text-lg"
-            >
+            <button onClick={reset} className="mt-4 text-green-600 text-lg">
               🍀 다시하기
             </button>
           </div>
         )}
       </main>
+      <h2 className="mt-4 text-lg font-semibold">🍀 행운랭킹</h2>
+      <div className="w-full border-green-600 border-2 rounded mt-2 flex flex-col items-center">
+        <RankerList className="w-full text-center" />
+      </div>
       <footer className="py-4">
         <p>copyright 2024. 럭키비키</p>
       </footer>
