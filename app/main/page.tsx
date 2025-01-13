@@ -1,21 +1,23 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
-import { API_ORIGIN, CLIENT_ORIGIN } from "../lib/constant";
-import {
-  getRandomValue,
-  getPercentage,
-  generateSignedFingerprint,
-  formatProbability,
-  getLevelProbability,
-  getLevelTextColor,
-  classNames,
-} from "../lib/function";
+
 import Character from "@/public/clova/character.webp";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
+
 import { clovaList } from "../lib/clova";
+import { API_ORIGIN } from "../lib/constant";
+import {
+  classNames,
+  formatProbability,
+  generateSignedFingerprint,
+  getLevelProbability,
+  getLevelTextColor,
+  getPercentage,
+  getRandomValue,
+} from "../lib/function";
 
 export default function Page() {
   const [level, setLevel] = useState(0);
@@ -103,7 +105,7 @@ export default function Page() {
       await navigator.share({
         title: "나의 운은 몇레벨일까요?",
         text: "오로지 클릭만으로 나의 운을 테스트해보세요!",
-        url: CLIENT_ORIGIN,
+        url: window.location.href,
       });
     } catch (error) {
       console.error(error);
