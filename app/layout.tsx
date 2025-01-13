@@ -10,8 +10,10 @@ const pretendard = localFont({
   weight: "45 920",
 });
 
-const title = "럭키비키 - 행운 테스트";
-const description = "나의 운은 상위 몇퍼센트일까요? 지금 확인해보세요!";
+const title = "럭키비키: 온라인 행운 테스트";
+const description = "오로지 터치로만 여러분의 행운을 시험해 보세요!";
+const imageUrl =
+  "https://diggingtoon.s3.ap-northeast-2.amazonaws.com/luckybicky-cover.webp";
 const GA_TRACKING_ID = "G-01FMX7HFBS";
 
 export const metadata: Metadata = {
@@ -24,7 +26,7 @@ export const metadata: Metadata = {
     url: CLIENT_ORIGIN,
     images: [
       {
-        url: "https://diggingtoon.s3.ap-northeast-2.amazonaws.com/lucky-bicky.png",
+        url: imageUrl,
         width: 800,
         height: 600,
       },
@@ -37,8 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title,
     description,
-    images:
-      "https://diggingtoon.s3.ap-northeast-2.amazonaws.com/lucky-bicky.png",
+    images: imageUrl,
   },
 };
 
