@@ -1,4 +1,4 @@
-import { encrypt, generateHmac } from "@/app/function";
+import { encrypt, generateHmac } from "@/app/lib/function";
 import { NextResponse } from "next/server";
 
 const SIGN_KEY = process.env.SIGN || "";

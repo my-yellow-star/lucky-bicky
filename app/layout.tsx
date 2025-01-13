@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
-import { CLIENT_ORIGIN } from "./constant";
+import { CLIENT_ORIGIN } from "./lib/constant";
 import Script from "next/dist/client/script";
 
 const pretendard = localFont({
@@ -10,7 +10,7 @@ const pretendard = localFont({
   weight: "45 920",
 });
 
-const title = "럭키비키 - 내 운 시험하기";
+const title = "럭키비키 - 행운 테스트";
 const description = "나의 운은 상위 몇퍼센트일까요? 지금 확인해보세요!";
 const GA_TRACKING_ID = "G-01FMX7HFBS";
 

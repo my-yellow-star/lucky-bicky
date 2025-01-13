@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { API_ORIGIN } from "./constant";
-import { getLevelTextColor } from "./function";
+import { API_ORIGIN } from "../lib/constant";
+import { getLevelTextColor } from "../lib/function";
 
 interface RankerModel {
   id: string;
