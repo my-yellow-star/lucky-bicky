@@ -103,8 +103,8 @@ export default function Page() {
   async function share() {
     try {
       await navigator.share({
-        title: "나의 운은 몇레벨일까요?",
-        text: "오로지 클릭만으로 나의 운을 테스트해보세요!",
+        title: "클로버와 하이파이브?",
+        text: "클로버와 행운의 하이파이브를 성공해보세요!",
         url: window.location.href,
       });
     } catch (error) {
