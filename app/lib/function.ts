@@ -1,3 +1,7 @@
+export function classNames(...classes: (string | undefined)[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export function getPercentage(lv: number) {
   return Math.pow(0.9, lv);
 }
