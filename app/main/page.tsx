@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useMemo, useRef, useState } from "react";
 import { API_ORIGIN, CLIENT_ORIGIN } from "../lib/constant";
 import {
-  seededRandom,
+  getRandomValue,
   getPercentage,
   generateSignedFingerprint,
   formatProbability,
@@ -41,7 +41,7 @@ export default function Page() {
   }
 
   function levelUp() {
-    if (seededRandom(Date.now()) < getPercentage(level)) {
+    if (getRandomValue() < getPercentage(level)) {
       handleLevelUp();
     } else {
       setShowResult(true);

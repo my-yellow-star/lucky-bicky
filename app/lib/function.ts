@@ -42,13 +42,8 @@ export function formatProbability(value: number) {
   return roundedValue.toString();
 }
 
-export function seededRandom(seed: number) {
-  const a = 1664525;
-  const c = 1013904223;
-  const m = 2 ** 32;
-
-  seed = (a * seed + c) % m; // LCG 공식
-  return seed / m; // 0과 1 사이의 값 반환
+export function getRandomValue() {
+  return Math.random();
 }
 
 const colors = [
