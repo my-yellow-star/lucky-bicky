@@ -3,37 +3,17 @@
 import Image from "next/image";
 
 import Character from "@/public/clova/character.webp";
-import Logo from "@/public/lucky-bicky-logo.webp";
 import Link from "next/link";
 import { RankerList } from "./components/ranker-list";
 import { IntroSectionItem } from "./components/intro-section-item";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { Header } from "./components/header";
+import { Footer } from "./components/footer";
 
 export default function Home() {
   return (
     <div className="px-4 h-full flex flex-col">
-      <header className="py-4">
-        <Image
-          onClick={() => location.reload()}
-          src={Logo}
-          alt="럭키비키 로고"
-          title="럭키비키 - Lucky bicky"
-          width={200}
-          height={50}
-          className="w-[100px] md:w-[150px] h-auto cursor-pointer"
-        />
-        <div className="flex gap-4 mt-2 px-1 text-gray-700">
-          <nav>
-            <Link href={`/main`}>행운 테스트</Link>
-          </nav>
-          <nav>
-            <Link href={`/event`}>이벤트</Link>
-          </nav>
-          <nav>
-            <Link href={`/ranking`}>명예의 전당</Link>
-          </nav>
-        </div>
-      </header>
+      <Header />
       <main className="flex w-full flex-1 flex-col items-center py-10 text-center">
         <Image
           src={Character}
@@ -105,9 +85,7 @@ export default function Home() {
           <RankerList className="w-full" />
         </section>
       </main>
-      <footer className="py-4">
-        <p>copyright 2024. 럭키비키</p>
-      </footer>
+      <Footer />
     </div>
   );
 }
