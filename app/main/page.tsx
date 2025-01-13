@@ -152,18 +152,23 @@ export default function Page() {
                 </div>
               </div>
             </div>
-            <Image
+            <button
               onClick={levelUp}
-              src={Character}
-              alt="clova-character"
-              title="클로버 캐릭터"
-              width={100}
-              height={100}
-              className={classNames(
-                "cursor-pointer w-[120px] mt-10 h-auto",
-                showAnimation ? "animate-bounce" : "animate-pulse"
-              )}
-            />
+              className="w-full mt-10 grid place-items-center"
+            >
+              <Image
+                src={Character}
+                alt="clova-character"
+                title="클로버 캐릭터"
+                width={100}
+                height={100}
+                key={level}
+                className={classNames(
+                  "w-[120px] h-auto pointer-events-none",
+                  showAnimation ? "animate-bounce" : "animate-pulse"
+                )}
+              />
+            </button>
             {showAnimation ? (
               <p className="text-green-primary-text mt-10 text-sm">
                 🙌 클로버가 하이파이브를 허락했어요!
