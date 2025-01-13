@@ -1,9 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
-import LevelUpAnimation from "../components/level-up-animation";
-import { RankerList } from "../components/ranker-list";
+import { useMemo, useRef, useState } from "react";
 import { API_ORIGIN, CLIENT_ORIGIN } from "../lib/constant";
 import {
   seededRandom,
@@ -12,7 +10,12 @@ import {
   formatProbability,
   getLevelProbability,
   getLevelTextColor,
+  classNames,
 } from "../lib/function";
+import Character from "@/public/clova/character.webp";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { clovaList } from "../lib/clova";
 
 export default function Page() {
   const [level, setLevel] = useState(0);
@@ -22,9 +25,12 @@ export default function Page() {
   const [recordStatus, setRecordStatus] = useState<
     "PENDING" | "ONGOING" | "COMPLETE"
   >("PENDING");
-  const captureRef = useRef(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>(null);
+  const clova = useMemo(
+    () => clovaList[Math.min(11, level === 0 ? 0 : level - 1)],
+    [level]
+  );
 
   function reset() {
     inputRef.current?.blur();
@@ -107,75 +113,91 @@ export default function Page() {
   return (
     <div className="px-4 h-full flex flex-col">
       <header className="py-4">
-        <Image
-          onClick={() => location.reload()}
-          src="/luck-logo.png"
-          alt="luck-logo"
-          title="럭키비키 - Lucky bicky"
-          width={200}
-          height={50}
-          className="w-[100px] md:w-[150px] h-auto cursor-pointer"
-        />
+        <Link href="/" className="flex items-center gap-2">
+          <ChevronLeftIcon className="w-4 h-4" />
+          <p>메인으로</p>
+        </Link>
       </header>
-      <main className="flex w-full flex-1 flex-col items-center py-10 text-center">
+      <main className="flex w-full flex-1 flex-col items-center pb-20 text-center">
         {!showResult ? (
-          <section className="mt-6">
-            <h1 className="text-2xl font-bold">오늘의 행운 테스트</h1>
-            <div className="mt-8 grid grid-cols-2 gap-2">
-              <div className="bg-gray-200">
-                <p>
-                  {level} → {level + 1} 확률
-                </p>
-                <p>{formatProbability(getPercentage(level))}%</p>
+          <section className="mt-6 flex flex-col items-center">
+            <h1 className="text-lg font-bold mt-8 text-center">
+              클로버와 하이파이브
+            </h1>
+            <p className="text-gray-500 text-sm">
+              클로버와 행운의 하이파이브를 성공해보세요!
+            </p>
+            <div className="grid grid-cols-2 gap-4 mt-6 justify-center">
+              <div className="shadow-lg border rounded-full aspect-square px-6 py-2 grid place-items-center text-center">
+                <div>
+                  <p className="text-sm text-gray-700">하이파이브 수</p>
+                  <p className="text-2xl font-semibold text-green-primary-text ml-2">
+                    {level}
+                    <span className="text-sm text-gray-700">번</span>
+                  </p>
+                </div>
               </div>
-              <div className="bg-gray-200">
-                <p>0 → {level + 1} 확률</p>
-                <p>{formatProbability(getLevelProbability(level))}%</p>
+              <div className="shadow-lg border rounded-full aspect-square px-6 py-2 grid place-items-center text-center">
+                <div>
+                  <p className="text-sm text-gray-700">성공 확률</p>
+                  <p
+                    className="text-xl font-semibold ml-2"
+                    style={{ color: getLevelTextColor(level) }}
+                  >
+                    {Math.round(getPercentage(level) * 100)}
+                    <span className="text-sm">%</span>
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="relative">
-              <p
-                style={{ color: getLevelTextColor(level) }}
-                className="text-[120px]"
-              >
-                {level}
-              </p>
-              {showAnimation && (
-                <LevelUpAnimation
-                  key={level}
-                  className="top-1/2 pointer-events-none left-1/2 transform -translate-x-1/2 -translate-y-1/2 absolute z-50"
-                />
-              )}
-            </div>
-            <button
+            <Image
               onClick={levelUp}
-              className="bg-green-600 text-white px-6 py-4 rounded-lg mt-4 hover:bg-green-500"
-            >
-              클릭으로 행운업
-            </button>
+              src={Character}
+              alt="clova-character"
+              title="클로버 캐릭터"
+              width={100}
+              height={100}
+              className={classNames(
+                "cursor-pointer w-[120px] mt-10 h-auto",
+                showAnimation ? "animate-bounce" : "animate-pulse"
+              )}
+            />
+            {showAnimation ? (
+              <p className="text-green-primary-text mt-10 text-sm">
+                🙌 클로버가 하이파이브를 허락했어요!
+              </p>
+            ) : (
+              <p className="text-gray-500 mt-10 text-sm">
+                <span className="text-green-primary-text">클로버</span>를 눌러
+                하이파이브를 시도해보세요!
+              </p>
+            )}
           </section>
         ) : (
           <div className="mt-10 w-full flex flex-col items-center">
-            <section ref={captureRef} className="px-8 py-4">
-              <h1 className="text-2xl font-bold">
-                {nickname.length > 0 ? `${nickname}님의` : "나의"} 행운력
-              </h1>
-              <p
-                className="text-[120px]"
-                style={{ color: getLevelTextColor(level) }}
-              >
-                <span className="text-[48px] font-semibold">LV.</span>
+            <h1 className="mt-1 font-semibold">
+              나는 클로버와{" "}
+              <span className="text-xl text-green-primary-text font-bold">
                 {level}
-              </p>
-              <p className="text-lg">
-                나의 운은 상위{" "}
-                <span className="text-[#f00]">
-                  {formatProbability(getLevelProbability(level - 1))}%
-                </span>
-                에요!
-              </p>
-            </section>
-            <div className="mt-8 w-full max-w-[480px]">
+              </span>
+              번 하이파이브했어요!
+            </h1>
+            <p className="text-gray-500 text-sm">
+              {formatProbability(getLevelProbability(level - 1))}%의 사람들이
+              성공했어요.
+            </p>
+            <Image
+              src={clova.image}
+              alt="clova"
+              width={200}
+              height={200}
+              className="h-auto w-[160px] mt-8 rounded-lg"
+            />
+            <p className="mt-4">{clova.title}</p>
+            <p className="text-sm text-gray-700 whitespace-pre-line">
+              {clova.description}
+            </p>
+            <div className="mt-8 w-full max-w-[480px] px-4">
               {recordStatus === "COMPLETE" ? (
                 <div className="text-blue-500">
                   <p>박제 완료!</p>
@@ -185,41 +207,42 @@ export default function Page() {
                   <p>행운 박제중...</p>
                 </div>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex bg-white py-3 rounded-lg">
                   <input
                     type="text"
                     ref={inputRef}
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
-                    className="bg-gray-200 w-full px-4 py-2 rounded focus:outline-none"
-                    placeholder="닉네임 입력하고 기록하기"
+                    className="w-full px-4 focus:outline-none bg-transparent"
+                    placeholder="행운의 이름을 입력해주세요"
                   />
                   <button
-                    disabled={recordStatus !== "PENDING"}
+                    disabled={recordStatus !== "PENDING" || nickname.length < 1}
                     onClick={record}
-                    className="rounded font-bold border-blue-500 border text-blue-500 px-4 shrink-0 disabled:bg-gray-400"
+                    className="text-[#141414] px-4 shrink-0 disabled:text-gray-400"
                   >
-                    행운 박제
+                    행운 기록
                   </button>
                 </div>
               )}
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <button
+                  onClick={reset}
+                  className="border rounded-lg border-green-primary-text text-green-primary-text bg-white"
+                >
+                  다시하기
+                </button>
+                <button
+                  onClick={share}
+                  className="bg-green-primary-text rounded-lg py-2.5 text-white hover:bg-green-primary"
+                >
+                  공유하기
+                </button>
+              </div>
             </div>
-            <button
-              onClick={share}
-              className="w-full max-w-[480px] bg-blue-500 rounded py-2.5 mt-4 text-white hover:bg-blue-600"
-            >
-              친구에게 공유하기
-            </button>
-            <button onClick={reset} className="mt-4 text-green-600 text-lg">
-              🍀 다시하기
-            </button>
           </div>
         )}
       </main>
-      <h2 className="mt-4 text-lg font-semibold">🍀 행운랭킹</h2>
-      <div className="w-full border-green-600 border-2 rounded mt-2 flex flex-col items-center">
-        <RankerList className="w-full text-center" />
-      </div>
       <footer className="py-4">
         <p>copyright 2024. 럭키비키</p>
       </footer>
