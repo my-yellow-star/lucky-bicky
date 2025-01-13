@@ -12,16 +12,17 @@ interface RankerModel {
 interface Props {
   className?: string;
   fromDayBefore?: number;
+  size?: number;
 }
 
-export function RankerList({ className, fromDayBefore }: Props) {
+export function RankerList({ className, fromDayBefore, size }: Props) {
   const [rankers, setRankers] = useState<RankerModel[]>();
 
   useEffect(() => {
     async function fetchRankers() {
-      let queryString = `sort=level&size=10`;
+      let queryString = `sort=level&size=${size ?? 10}`;
       if (fromDayBefore) {
-        queryString += `fromDayBefore=${fromDayBefore}`;
+        queryString += `&fromDayBefore=${fromDayBefore}`;
       }
 
       const res = await fetch(`${API_ORIGIN}/api/v1/luck?${queryString}`, {
@@ -36,7 +37,7 @@ export function RankerList({ className, fromDayBefore }: Props) {
       }
     }
     fetchRankers();
-  }, [fromDayBefore]);
+  }, [fromDayBefore, size]);
 
   function bgColorByRank(rank: number) {
     if (rank === 0) return "bg-green-primary text-green-800 font-bold";
@@ -56,8 +57,8 @@ export function RankerList({ className, fromDayBefore }: Props) {
               bgColorByRank(index)
             )}
           >
-            <p className="w-10">{index + 1}</p>
-            <p className="flex-1 line-clamp-1">
+            <p className="w-10 text-center">{index + 1}</p>
+            <p className="flex-1 line-clamp-1 text-base text-center">
               {ranker.nickname.length > 0 ? ranker.nickname : "이름 없음"}
             </p>
             <div className="w-14 flex justify-end pr-2">
